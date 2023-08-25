@@ -15,7 +15,6 @@ public class StageManager : MonoBehaviour
     Vector3 mousepos;
     public Vector3 startPos;
 
-    // Update is called once per frame
     void Update()
     {
         // Current Character Update
@@ -24,6 +23,7 @@ public class StageManager : MonoBehaviour
             arr_Character[0].isCurrent = true;
         }
 
+        // Waitng for Drag
         if(!arr_Character[0].readyFlag && arr_Character[0].gameObject.layer!=9)
         {
             arr_Character[0].onStage();

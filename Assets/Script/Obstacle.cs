@@ -4,15 +4,8 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
-   
+    int HP = 500;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
     void Update()
     {
         
