@@ -30,8 +30,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.28, y: -2.023261, z: 0}
-  m_LocalScale: {x: 0.27010113, y: 2.024613, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.20000002, y: 1.4991518, z: 0.74046344}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -126,6 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3954371fdc8396a4eb4a0c24712e5d41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  stageManager: {fileID: 0}
 --- !u!61 &440227364013785517
 BoxCollider2D:
   m_ObjectHideFlags: 0

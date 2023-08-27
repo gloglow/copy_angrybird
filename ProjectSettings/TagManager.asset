@@ -8,14 +8,14 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Floor
   - Water
   - UI
   - Character
   - Enemy
   - Obstacle
   - Character_Fin
-  - 
+  - Character_Wait
   - 
   - 
   - 
