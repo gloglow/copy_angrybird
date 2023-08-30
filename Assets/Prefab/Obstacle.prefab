@@ -29,9 +29,9 @@ Transform:
   m_GameObject: {fileID: 3660406311808158084}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.28, y: -2.023261, z: 0}
-  m_LocalScale: {x: 0.20000002, y: 1.4991518, z: 0.74046344}
-  m_ConstrainProportionsScale: 1
+  m_LocalPosition: {x: 6.28, y: -2.023261, z: -0.21}
+  m_LocalScale: {x: 0.20000002, y: 1.4991518, z: -2.25}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.42352945, g: 0.20784315, b: 0.20784315, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -100,7 +100,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 0.5
   m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 6200000, guid: 0330cacd4c2dbab4bb29a3fab0fbe40c, type: 2}
@@ -126,7 +126,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3954371fdc8396a4eb4a0c24712e5d41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HP: 500
+  damageAdj: 2
+  damageWeighting: 100
   stageManager: {fileID: 0}
+  soundManager: {fileID: 0}
+  effectManager: {fileID: 0}
+  prefab_enemyText: {fileID: 2261472987724306872, guid: 60dfb0ca1dab121438a8e22dfbb9b219, type: 3}
+  rigid: {fileID: 0}
 --- !u!61 &440227364013785517
 BoxCollider2D:
   m_ObjectHideFlags: 0

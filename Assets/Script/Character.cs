@@ -15,21 +15,33 @@ public class Character : MonoBehaviour
     public float shootPower;
     public float damageAdj;
     public float damageWeighting;
+    
 
     public GameManager gameManager;
     public StageManager stageManager;
+    public SoundManager soundManager;
     Animator animator;
     Rigidbody2D rigid;
+
+    Vector3 crtPos;
+    Vector3 pastPos;
+
+    public bool onGround = false;
 
     private void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        animator.SetBool("isReady", false);
+        animator.SetBool("isReady", true);
     }
 
     void Update()
     {
+        if(isCurrent && animator.GetBool("isReady"))
+        {
+            animator.SetBool("isReady", false);
+        }
+
         // Check Dragged or not
         if (readyFlag == true)
         {
@@ -39,16 +51,45 @@ public class Character : MonoBehaviour
             if (Input.GetMouseButtonUp(0))
             {
                 // Change Layer -> Layer 9 : cannot be clicked
-                this.gameObject.layer = 9;
+                gameObject.layer = 9;
                 Shoot();
                 readyFlag = false;
             }
         }
+
+        // Rotate During Flying
+        if (gameObject.layer == 9 && !onGround)
+        {
+            crtPos = transform.position;
+            if (pastPos == new Vector3(0,0,0))
+            {
+                pastPos = transform.position;
+            }
+            else if(pastPos!=crtPos)
+            {
+                Vector3 vec=crtPos - pastPos;
+                transform.right=vec.normalized;
+                pastPos = crtPos;
+            }
+        }
+
     }
 
     private void FixedUpdate()
     {
-        if (gameObject.layer == 9 && rigid.velocity.magnitude < 0.03)
+        // Check On ground or not
+        if(gameObject.layer == 9 && !onGround)
+        {
+            Debug.DrawRay(rigid.position, Vector3.down, Color.yellow);
+            RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Floor"));
+            if (rayHit.collider != null)
+            {
+                onGround = true;
+            }
+        }
+
+        // After shooted + low velocity
+        if (gameObject.layer == 9 && rigid.velocity.magnitude <= 0)
         {
             Die();
         }
@@ -56,7 +97,7 @@ public class Character : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // Calculate Damage
-        int damage = (int)(rigid.velocity.magnitude / damageAdj * damageWeighting);
+        int damage = ((int)(rigid.velocity.magnitude / damageAdj * damageWeighting)) / 10 * 10;
 
         // Collision with Enemy or Obstacle
         if (collision.gameObject.layer == 7 || collision.gameObject.layer == 8)
@@ -83,26 +124,35 @@ public class Character : MonoBehaviour
 
     public void readyToShoot()
     {
-        // Stop animation during charging
-        animator.SetBool("isReady", true);
-
         // Follow Mouse
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         
-        if(mousePos.x < maxMouse_x)
+        // Range of mouse when charging
+        if(Mathf.Abs(stageManager.startPos.x - mousePos.x) > maxMouse_x)
         {
-            mousePos.x = maxMouse_x;
+            if (Mathf.Abs(stageManager.startPos.y - mousePos.y) > maxMouse_y)
+            {
+                transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+                return;
+            }
+            transform.position = new Vector3(transform.position.x, mousePos.y, 0);
+            return;
         }
-        if(mousePos.y < maxMouse_y)
+        if(Mathf.Abs(stageManager.startPos.y - mousePos.y) > maxMouse_y)
         {
-            mousePos.y = maxMouse_y;
+            transform.position = new Vector3(mousePos.x, transform.position.y, 0);
+            return;
         }
 
         transform.position = new Vector3(mousePos.x, mousePos.y, 0);
     }
     void Shoot()
     {
-        animator.SetBool("isReady", false);
+        stageManager.traceClear();
+
+        // Shooting sound
+        soundManager.ShootingSound();
+
         rigid.gravityScale = 1;
 
         // Set Shooting Direction and Power
@@ -115,6 +165,7 @@ public class Character : MonoBehaviour
         }
         rigid.velocity= dirvec*magvec*shootPower;
     }
+
 
     public void onStage() // ready to fly
     {
