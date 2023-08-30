@@ -78,7 +78,7 @@ public class Character : MonoBehaviour
     private void FixedUpdate()
     {
         // Check On ground or not
-        if(gameObject.layer == 9 && !onGround)
+        if (gameObject.layer == 9 && !onGround)
         {
             Debug.DrawRay(rigid.position, Vector3.down, Color.yellow);
             RaycastHit2D rayHit = Physics2D.Raycast(rigid.position, Vector3.down, 1, LayerMask.GetMask("Floor"));
@@ -88,16 +88,18 @@ public class Character : MonoBehaviour
             }
         }
 
-        // After shooted + low velocity
-        if (gameObject.layer == 9 && rigid.velocity.magnitude <= 0)
+        // Die = After shooted + low velocity or Fall
+        if ((gameObject.layer == 9 && rigid.velocity.magnitude <= 0.03f) || transform.position.y < -6)
         {
             Die();
         }
     }
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        onGround = true;
+
         // Calculate Damage
-        int damage = ((int)(rigid.velocity.magnitude / damageAdj * damageWeighting)) / 10 * 10;
+        int damage = ((int)(rigid.velocity.magnitude / damageAdj * rigid.mass * damageWeighting)) / 10 * 10;
 
         // Collision with Enemy or Obstacle
         if (collision.gameObject.layer == 7 || collision.gameObject.layer == 8)

@@ -26,7 +26,7 @@ public class Enemy : MonoBehaviour
     {
         if (stageManager.score > 0)
         {
-            int damage = ((int)(rigid.velocity.magnitude / damageAdj * damageWeighting))/10*10;
+            int damage = ((int)(rigid.velocity.magnitude / damageAdj * rigid.mass *  damageWeighting))/10*10;
 
             // Collision with Enemy or Obstacle
             if (damage!=0 && (collision.gameObject.layer == 7 || collision.gameObject.layer == 8))
@@ -85,14 +85,9 @@ public class Enemy : MonoBehaviour
 
         // Update Score
         stageManager.score += score;
-        
-        // Destroy
-        Invoke("Destroy", 0.3f);
-    }
 
-    void Destroy()
-    {
-        gameObject.SetActive(false);
+        // Destroy
+        Destroy(gameObject);
         stageManager.enemyCnt--;
     }
 

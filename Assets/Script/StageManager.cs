@@ -150,6 +150,7 @@ public class StageManager : MonoBehaviour
         {
             Destroy(traceList[i].gameObject);
         }
+        traceList.Clear();
     }
 
     public void nextCharacter()
@@ -178,10 +179,10 @@ public class StageManager : MonoBehaviour
 
         // Star
         stars_crt[1].gameObject.SetActive(false);
-        if (score >= 15000)
+        if (score >= 30000)
         {
             stars_crt[3].gameObject.SetActive(false);
-            if (score >= 20000)
+            if (score >= 50000)
             {
                 stars_crt[5].gameObject.SetActive(false);
             }
