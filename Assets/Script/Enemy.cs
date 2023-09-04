@@ -6,16 +6,18 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class Enemy : MonoBehaviour
 {
-    public int HP = 500;
-    int score = 5000;
-
-    public float damageAdj;
-    public float damageWeighting;
-
+    [Header ("Commons")]
     public StageManager stageManager;
     public SoundManager soundManager;
     public EffectManager effectManager;
-    public Rigidbody2D rigid;
+
+    [Header ("Property")]
+    [SerializeField] private int HP = 500;
+    [SerializeField] int score = 5000;
+    [SerializeField] float damageAdj;
+    [SerializeField] float damageWeighting;
+    
+    private Rigidbody2D rigid;
 
     void Awake()
     {
@@ -84,7 +86,7 @@ public class Enemy : MonoBehaviour
         gameObject.layer = 10;
 
         // Update Score
-        stageManager.score += score;
+        stageManager.ScorePlus(score);
 
         // Destroy
         Destroy(gameObject);

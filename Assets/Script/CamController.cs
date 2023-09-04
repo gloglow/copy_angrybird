@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class CamController : MonoBehaviour
 {
+    [Header("Commons")]
     public StageManager stageManager;
-
     public bool camStop;
+
+    [Header("Cam Control")]
+    [SerializeField] private Vector3 initPos;
+    [SerializeField] private Vector3 movSpeed;
 
     private void Awake()
     {
-        transform.position = new Vector3(16, 0, -10);
+        transform.position = initPos;
         camStop = false;
     }
 
@@ -18,7 +22,7 @@ public class CamController : MonoBehaviour
     {
         if(!camStop && transform.position.x > 0)
         {
-            transform.position -= new Vector3(0.01f, 0, 0);
+            transform.position -= movSpeed;
         }
     }
 

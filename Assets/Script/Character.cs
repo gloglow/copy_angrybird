@@ -4,29 +4,36 @@ using UnityEngine;
 
 public class Character : MonoBehaviour
 {
-    public bool isCurrent;
-    public bool readyFlag = false;
-
-    // Range of Charge
-    public float maxMouse_x;
-    public float maxMouse_y;
-    public float maxMag;
-
-    public float shootPower;
-    public float damageAdj;
-    public float damageWeighting;
-    
-
-    public GameManager gameManager;
+    [Header ("Commons")]
     public StageManager stageManager;
     public SoundManager soundManager;
-    Animator animator;
-    Rigidbody2D rigid;
+    public Traces traces;
+    private Animator animator;
+    private Rigidbody2D rigid;
 
-    Vector3 crtPos;
-    Vector3 pastPos;
+    [Header("Prefab")]
+    public CharacterTrace prafab_characterTrace;
 
+    [Header ("Charge Property")]
+    [SerializeField] private float maxMouse_x;
+    [SerializeField] private float maxMouse_y;
+    [SerializeField] private float maxMag;
+
+    [Header ("Shooting Property")]
+    [SerializeField] private float shootPower;
+    [SerializeField] private float damageAdj;
+    [SerializeField] private float damageWeighting;
+
+    [Header ("Vector for calculate")]
+    private Vector3 crtPos;
+    private Vector3 pastPos;
+
+    [Header ("Managing")]
+    public bool isCurrent;
+    public bool readyFlag = false;
     public bool onGround = false;
+    float minVelocity = 0.03f;
+    float fallY = -6f;
 
     private void Awake()
     {
@@ -57,9 +64,10 @@ public class Character : MonoBehaviour
             }
         }
 
-        // Rotate During Flying
+        // Draw Trace && Rotate During Flying
         if (gameObject.layer == 9 && !onGround)
         {
+            DrawTrace();
             crtPos = transform.position;
             if (pastPos == new Vector3(0,0,0))
             {
@@ -89,7 +97,7 @@ public class Character : MonoBehaviour
         }
 
         // Die = After shooted + low velocity or Fall
-        if ((gameObject.layer == 9 && rigid.velocity.magnitude <= 0.03f) || transform.position.y < -6)
+        if ((gameObject.layer == 9 && rigid.velocity.magnitude <= minVelocity) || transform.position.y < fallY)
         {
             Die();
         }
@@ -106,6 +114,12 @@ public class Character : MonoBehaviour
         {
             OnAttack(collision.transform, collision.gameObject.layer, damage);
         }
+    }
+
+    void DrawTrace()
+    {
+        CharacterTrace crtTrace = Instantiate(prafab_characterTrace);
+        crtTrace.transform.position = transform.position;
     }
 
     void OnAttack(Transform obj, int layerNum, int damage)
@@ -130,27 +144,18 @@ public class Character : MonoBehaviour
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         
         // Range of mouse when charging
-        if(Mathf.Abs(stageManager.startPos.x - mousePos.x) > maxMouse_x)
-        {
-            if (Mathf.Abs(stageManager.startPos.y - mousePos.y) > maxMouse_y)
-            {
-                transform.position = new Vector3(transform.position.x, transform.position.y, 0);
-                return;
-            }
-            transform.position = new Vector3(transform.position.x, mousePos.y, 0);
-            return;
-        }
-        if(Mathf.Abs(stageManager.startPos.y - mousePos.y) > maxMouse_y)
-        {
-            transform.position = new Vector3(mousePos.x, transform.position.y, 0);
-            return;
-        }
+        float distanceX = mousePos.x - stageManager.startPos.x;
+        distanceX=Mathf.Clamp(distanceX, -maxMouse_x, maxMouse_x);
 
-        transform.position = new Vector3(mousePos.x, mousePos.y, 0);
+        float distanceY = mousePos.y - stageManager.startPos.y;
+        distanceY = Mathf.Clamp(distanceY, -maxMouse_y, maxMouse_y);
+
+        transform.position = stageManager.startPos + new Vector3(distanceX, distanceY, 0);
     }
     void Shoot()
     {
-        stageManager.traceClear();
+        // Erase trace
+        traces.clearTrace();
 
         // Shooting sound
         soundManager.ShootingSound();
@@ -172,6 +177,7 @@ public class Character : MonoBehaviour
     public void onStage() // ready to fly
     {
         transform.position = stageManager.startPos;
+        onGround = false;
         rigid.gravityScale = 0;
     }
 

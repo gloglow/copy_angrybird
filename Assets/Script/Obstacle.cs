@@ -5,23 +5,23 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
-    public int HP = 500;
-    int score = 500;
-
-    public float damageAdj;
-    public float damageWeighting;
-
+    [Header ("Commons")]
     public StageManager stageManager;
     public SoundManager soundManager;
     public EffectManager effectManager;
-    public GameObject prefab_enemyText;
-    public Rigidbody2D rigid;
+
+    [Header ("Property")]
+    [SerializeField] private int HP = 500;
+    [SerializeField] private int score = 500;
+    [SerializeField] private float damageAdj;
+    [SerializeField] private float damageWeighting;
+
+    private Rigidbody2D rigid;
 
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
     }
-
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -62,7 +62,7 @@ public class Obstacle : MonoBehaviour
         HP -= damage;
 
         // Update Score
-        stageManager.score += damage;
+        stageManager.ScorePlus(damage);
 
         // Die
         if (HP < 0)
@@ -85,7 +85,7 @@ public class Obstacle : MonoBehaviour
         gameObject.layer = 10;
 
         // Update Score
-        stageManager.score += score;
+        stageManager.ScorePlus(score);
 
         // Destroy
         Destroy(gameObject);

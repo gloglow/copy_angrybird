@@ -100,17 +100,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00588e8cac442b34f9b520dc923dacd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isCurrent: 1
-  readyFlag: 0
+  gameManager: {fileID: 0}
+  stageManager: {fileID: 0}
+  soundManager: {fileID: 0}
+  prafab_characterTrace: {fileID: 2575471237458537089, guid: 41dcc5e222bdbd446afefdf6c97b8f5f, type: 3}
   maxMouse_x: 1.5
   maxMouse_y: 1.5
   maxMag: 5
   shootPower: 20
   damageAdj: 2
   damageWeighting: 250
-  gameManager: {fileID: 0}
-  stageManager: {fileID: 0}
-  soundManager: {fileID: 0}
+  isCurrent: 1
+  readyFlag: 0
   onGround: 0
 --- !u!50 &-682673888620329728
 Rigidbody2D:

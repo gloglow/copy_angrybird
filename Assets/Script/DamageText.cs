@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class DamageText : MonoBehaviour
 {
-    bool flag = false;
+    private bool flag = false;
 
     // Start is called before the first frame update
     void Start()

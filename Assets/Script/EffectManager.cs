@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class EffectManager : MonoBehaviour
 {
+    [Header ("Prefab")]
     public Effects prefab_effect;
     public GameObject prefab_enemyText;
 

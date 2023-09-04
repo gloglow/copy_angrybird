@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class GameManager_s1 : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     public GameObject[] arr_gameObject;
     public Transform[] Clouds;
     public float cloudSpeed;
+
     private void Awake()
     {
         for (int i=0;  i<arr_gameObject.Length; i++) 
@@ -33,6 +34,11 @@ public class GameManager_s1 : MonoBehaviour
 
     public void gotoNextScene()
     {
-        SceneManager.LoadScene(0);
+        SceneManager.LoadScene("Stage1-1");
+    }
+
+    public void gameExit()
+    {
+        Application.Quit();
     }
 }

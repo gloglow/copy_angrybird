@@ -6,39 +6,53 @@ using UnityEngine.SceneManagement;
 
 public class StageManager : MonoBehaviour
 {
-    public CamController cam;
+    [Header ("Prefab")]
     public Character prefab_Character;
     public Enemy prefab_Enemy;
     public Obstacle prefab_Obstacle;
+
+    [Header ("Commons")]
+    public CamController cam;
     public GameManager gameManager;
     public SoundManager soundManager;
-    public CharacterTrace prefab_characterTrace;
-    public Text resultText;
-    public Text scoreText;
-    public Text scoreText_result;
-    public Text highscoreText_result;
-    public Image[] stars_crt;
-    public Image[] stars_high;
-    public Canvas resultUI;
-    public Canvas onplayUI;
-    public Canvas pauseUI;
-    public Canvas retryUI;
-    public Transform[] Clouds;
-
     public List<Character> characterList;
-    public int enemyCnt;
-    bool endFlag=false;
-    public List<CharacterTrace> traceList;
 
-    Vector3 mousepos;
+    [Header ("UI")]
+    [SerializeField] private Text resultText;
+    [SerializeField] private Text scoreText;
+    [SerializeField] private Text scoreText_result;
+    [SerializeField] private Image[] stars_crt;
+    [SerializeField] private Canvas panel;
+    [SerializeField] private Canvas resultUI;
+    [SerializeField] private Canvas onplayUI;
+    [SerializeField] private Canvas pauseUI;
+    [SerializeField] private Canvas retryUI;
+
+    [Header ("Background")]
+    [SerializeField] private Transform[] Clouds;
+    [SerializeField] private float cloudSpeed;
+
+    [Header("CamControl")]
+    [SerializeField] private float camRangeRight;
+    [SerializeField] private float camRangeLeft;
+
+    [Header ("Variable for play")]
+    public int enemyCnt;
+    [SerializeField] private bool endFlag =false;
+    [SerializeField] private Vector3 mousepos;
     public Vector3 startPos;
     public int score;
-    public float cloudSpeed;
+    [SerializeField] private int star2Cdtion;
+    [SerializeField] private int star3Cdtion;
+    private int lifeBonus = 10000;
+
 
     private void Awake()
     {
         score = 0;
+        scoreText.text = "Score : " + score;
 
+        panel.gameObject.SetActive(false);
         resultUI.gameObject.SetActive(false);
         pauseUI.gameObject.SetActive(false);
         retryUI.gameObject.SetActive(false);
@@ -48,9 +62,6 @@ public class StageManager : MonoBehaviour
 
     void Update()
     {
-        // score text
-        scoreText.text = "Score : " + score;
-
         // Current Character Update
         if (characterList[0].isCurrent == false)
         {
@@ -76,7 +87,6 @@ public class StageManager : MonoBehaviour
             {
                 // Bow string sound
                 soundManager.bowChargeSound();
-
                 characterList[0].readyFlag = true;
             }
         }
@@ -87,28 +97,22 @@ public class StageManager : MonoBehaviour
             Vector3 move = new Vector3((mousepos.x-Input.mousePosition.x)/20, 0, -10);
 
             // Range of Camera position
-            if (move.x > 22)
+            if (move.x > camRangeRight)
             {
-                move.x = 22;
+                move.x = camRangeRight;
             }
-            else if(move.x < -1.4f)
+            else if(move.x < camRangeLeft)
             {
-                move.x = -1.4f;
+                move.x = camRangeLeft;
             }
             cam.camMove_pos(move);
             cam.camStop=true;
         }
 
-        // Draw trace during Flying
-        if (characterList[0].gameObject.layer == 9 && !characterList[0].onGround) 
-        {
-            DrawTrace();
-        }
-
         // Level Clear 
         if (enemyCnt == 0 && endFlag == false)
         {
-            score += (characterList.Count - 1) * 10000;
+            score += (characterList.Count - 1) * lifeBonus;
             endFlag = true;
             Invoke("LevelClear", 3f);
         }
@@ -118,9 +122,9 @@ public class StageManager : MonoBehaviour
         if (characterList[0].transform.position.x > 0)
         {
             float xCamPos = characterList[0].transform.position.x;
-            if(xCamPos >= 21f)
+            if(xCamPos >= camRangeRight)
             {
-                xCamPos = 21f;
+                xCamPos = camRangeRight;
             }
             cam.camMove_pos(new Vector3(xCamPos, 0, -10));
         }
@@ -137,20 +141,10 @@ public class StageManager : MonoBehaviour
         }
     }
 
-    void DrawTrace()
+    public void ScorePlus(int plusScore)
     {
-        CharacterTrace characterTrace = Instantiate(prefab_characterTrace, transform);
-        characterTrace.transform.position = characterList[0].transform.position;
-        traceList.Add(characterTrace);
-    }
-
-    public void traceClear()
-    {
-        for (int i = 0; i < traceList.Count; i++) 
-        {
-            Destroy(traceList[i].gameObject);
-        }
-        traceList.Clear();
+        score += plusScore;
+        scoreText.text = "Score : " + score;
     }
 
     public void nextCharacter()
@@ -169,20 +163,30 @@ public class StageManager : MonoBehaviour
         }
     }
 
+    void ShowPanel()
+    {
+        panel.gameObject.SetActive(true);
+    }
+
+    void ClosePanel()
+    {
+        panel.gameObject.SetActive(false);
+    }
+
     void LevelClear()
     {
         // Result UI
+        ShowPanel();
         resultUI.gameObject.SetActive(true);
         resultText.text = "LEVEL CLEARED!";
-        //score += (characterList.Count-1) *10000;
         scoreText_result.text = "" + score;
 
         // Star
         stars_crt[1].gameObject.SetActive(false);
-        if (score >= 30000)
+        if (score >= star2Cdtion)
         {
             stars_crt[3].gameObject.SetActive(false);
-            if (score >= 50000)
+            if (score >= star3Cdtion)
             {
                 stars_crt[5].gameObject.SetActive(false);
             }
@@ -195,6 +199,7 @@ public class StageManager : MonoBehaviour
     void LevelFailed()
     {
         // Result UI
+        ShowPanel();
         resultUI.gameObject.SetActive(true);
         resultText.text = "LEVEL FAILED!";
         scoreText_result.text = "" + score;
@@ -205,6 +210,7 @@ public class StageManager : MonoBehaviour
     public void Pause()
     {
         // Pause Button
+        ShowPanel();
         onplayUI.gameObject.SetActive(false);
         pauseUI.gameObject.SetActive(true);
         Time.timeScale = 0f;
@@ -221,21 +227,23 @@ public class StageManager : MonoBehaviour
         {
             retryUI.gameObject.SetActive(false);
         }
+        ClosePanel();
         onplayUI.gameObject.SetActive(true);
         Time.timeScale = 1f;
     }
 
     public void Retry()
     {
+        ShowPanel();
         // Retry Button
         onplayUI.gameObject.SetActive(false);
         retryUI.gameObject.SetActive(true);
         Time.timeScale = 0f;
     }
 
-    public void gotoScene2()
+    public void gotoSceneTitle()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        SceneManager.LoadScene("GameTitle");
     }
 
     public void goRetry()
